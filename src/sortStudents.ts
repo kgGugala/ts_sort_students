@@ -31,32 +31,17 @@ export function sortStudents(students: Student[],
 
   switch (sortBy) {
     case SortType.Name:
-      result = result.sort((a: Student, b: Student) => {
-        if (order === 'asc') {
-          return a.name.localeCompare(b.name);
-        }
-
-        return b.name.localeCompare(a.name);
-      });
-      break;
-
     case SortType.Surname:
-      result = result.sort((a: Student, b: Student) => {
-        if (order === 'asc') {
-          return a.surname.localeCompare(b.surname);
-        }
 
-        return b.surname.localeCompare(a.surname);
+      result = result.sort((a: Student, b: Student) => {
+        return order === 'asc' ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
       });
       break;
 
     case SortType.Age:
       result = result.sort((a: Student, b: Student) => {
-        if (order === 'asc') {
-          return a.age - b.age;
-        }
-
-        return b.age - a.age;
+        return order === 'asc' ? a.age - b.age : b.age - a.age;
       });
       break;
 
@@ -76,11 +61,8 @@ export function sortStudents(students: Student[],
 
     case SortType.Grades:
       result = result.sort((a, b) => {
-        if (order === 'asc') {
-          return averageGrade(a) - averageGrade(b);
-        }
-
-        return averageGrade(b) - averageGrade(a);
+        return order === 'asc' ? averageGrade(a) - averageGrade(b)
+          : averageGrade(b) - averageGrade(a);
       });
 
       break;
