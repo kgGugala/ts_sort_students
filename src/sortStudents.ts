@@ -1,4 +1,3 @@
-
 export interface Student {
   name: string;
   surname: string;
@@ -12,59 +11,71 @@ export enum SortType {
   Surname = 'surname',
   Age = 'age',
   Married = 'married',
-  Grades = 'grades'
+  Grades = 'grades',
+  AverageGrade = 'averageGrade'
 }
 
-// create SortOrder type
 export type SortOrder = 'asc' | 'desc';
 
 function averageGrade(student: Student): number {
-  return student.grades.reduce((sum, grade) => (
-    sum + grade
-  ), 0);
+  const total = student.grades.reduce((sum, grade) => (sum + grade), 0);
+
+  return total / student.grades.length;
 }
 
-export function sortStudents(students: Student[],
-  sortBy: SortType,
-  order: SortOrder): Student[] {
-  let result = [...students];
+export function sortStudents(
+  students: Student[], sortBy: SortType, order: SortOrder,
+): Student[] {
+  const result = [...students];
 
   switch (sortBy) {
     case SortType.Name:
     case SortType.Surname:
-
-      result = result.sort((a: Student, b: Student) => {
-        return order === 'asc' ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      });
+      result.sort((a: Student, b: Student) => (
+        order === 'asc'
+          ? a[sortBy].localeCompare(b[sortBy])
+          : b[sortBy].localeCompare(a[sortBy])));
       break;
 
     case SortType.Age:
-      result = result.sort((a: Student, b: Student) => {
-        return order === 'asc' ? a.age - b.age : b.age - a.age;
-      });
+
+      result.sort((a: Student, b: Student) => (
+        order === 'asc' ? a.age - b.age : b.age - a.age));
+
       break;
 
     case SortType.Married:
-      result = result.sort((a, b) => {
-        if (a.married && !b.married) {
-          return -1;
+      result.sort((a: Student, b: Student) => {
+        if (a.married === b.married) {
+          return 0;
         }
 
-        if (!a.married && b.married) {
-          return 1;
-        }
+        const ifOrder = order === 'asc' ? 1 : -1;
 
-        return 0;
+        return (a.married && !b.married) ? ifOrder : -ifOrder;
       });
       break;
 
     case SortType.Grades:
-      result = result.sort((a, b) => {
-        return order === 'asc' ? averageGrade(a) - averageGrade(b)
-          : averageGrade(b) - averageGrade(a);
-      });
+      result.sort((a: Student, b: Student) => {
+        const avgA = averageGrade(a);
+        const avgB = averageGrade(b);
 
+        return order === 'asc' ? avgA - avgB : avgB - avgA;
+      });
+      break;
+
+    case SortType.AverageGrade:
+      result.sort((a: Student, b: Student) => {
+        const avgA = averageGrade(a);
+        const avgB = averageGrade(b);
+
+        if (avgA === avgB) {
+          return 0;
+        }
+
+        return order === 'asc' ? avgA - avgB : avgB - avgA;
+      });
       break;
 
     default:
